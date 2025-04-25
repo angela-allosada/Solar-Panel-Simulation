@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Solar Panel Profit Simulation</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-image: url('https://www.solarphilippines.ph/wp-content/uploads/2022/08/Screenshot-123.png'); 
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      padding: 40px;
+      color: #ffffff;
+    }
+
+    h1 {
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 10px 20px;
+      border-radius: 12px;
+      display: inline-block;
+	  font-size: 36px;
+      font-weight: bold;
+	  font-family: 'Georgia', serif;
+    }
+
+    .container {
+      display: flex;
+      gap: 30px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .left-panel {
+      flex: 1;
+      min-width: 320px;
+    }
+
+    .right-panel {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .output-box {
+      background: rgba(255, 255, 255, 0.9);
+      color: #333;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    canvas {
+      max-width: 100%;
+      background-color: rgba(255, 255, 255, 0.85);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    input[type=range] {
+      width: 100%;
+    }
+
+    button {
+      margin: 10px 5px 5px 0;
+      padding: 10px 16px;
+      font-size: 14px;
+      background-color: #007b83;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #005f63;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <h1> Solar Panel Profit Simulation</h1>
+
+  <p>Use the slider to choose how many solar panels to produce:</p>
+  <input type="range" id="slider" min="0" max="200" value="0" oninput="updateValue(this.value)">
+  <p><strong>Number of panels:</strong> <span id="panelCount">0</span></p>
+
+  <div class="output-box">
+    <p> Revenue: <span id="revenue">0</span> Price Units</p>
+    <p> Cost: <span id="cost">0</span> Price Units</p>
+    <p> Profit: <span id="profit">0</span> Price Units</p>
+  </div>
+
+  <div class="container">
+    <!-- LEFT PANEL: CHART -->
+    <div class="left-panel">
+      <canvas id="profitChart"></canvas>
+    </div>
+
+    <!-- RIGHT PANEL: INFO TABS -->
+    <div class="right-panel">
+      <div>
+        <button onclick="showTab('optTab')">Relevance of Optimization</button>
+        <button onclick="showTab('sdgTab')">Connection to SDG 9</button>
+      </div>
+
+      <div id="optTab" class="tab-content active output-box">
+        <h3>Why Optimization Matters</h3>
+        <p>
+          Optimization helps the company maximize profit by choosing the most efficient number of solar panels to produce.
+          It avoids wasting money, materials, and effort — leading to smarter, more sustainable production.
+        </p>
+      </div>
+
+      <div id="sdgTab" class="tab-content output-box">
+        <h3>Connection to SDG 9</h3>
+        <p style="text-align:justify;"> 
+          This project supports Sustainable Development Goal 9: Industry, Innovation, and Infrastructure.
+          Producing affordable solar panels promotes innovation and inclusive industrial growth for communities in need. 
+		  Renewable energy such as solar energy fosters economic growth as this provides a clean reliable source that is cost efficient 
+		  in the long run. Furthermore, this innovation significantly supports sustainability as it reduces the people's reliance on fossil fuel energy.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Chart setup
+    const ctx = document.getElementById('profitChart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Profit (Price Units)',
+          data: [],
+          borderColor: '#007b83',
+          backgroundColor: 'rgba(0, 123, 131, 0.1)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Number of Solar Panels'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Profit (Price Units)'
+            }
+          }
+        }
+      }
+    });
+
+    function updateValue(x) {
+      document.getElementById("panelCount").textContent = x;
+      x = parseFloat(x);
+      let revenue = 50 * x - 0.2 * x * x;
+      let cost = 20 * x + 100;
+      let profit = revenue - cost;
+
+      document.getElementById("revenue").textContent = revenue.toFixed(2);
+      document.getElementById("cost").textContent = cost.toFixed(2);
+      document.getElementById("profit").textContent = profit.toFixed(2);
+    }
+
+    function fillChart() {
+      for (let x = 0; x <= 200; x++) {
+        let revenue = 50 * x - 0.2 * x * x;
+        let cost = 20 * x + 100;
+        let profit = revenue - cost;
+        chart.data.labels.push(x);
+        chart.data.datasets[0].data.push(profit.toFixed(2));
+      }
+      chart.update();
+    }
+
+    function showTab(tabId) {
+      const tabs = document.getElementsByClassName('tab-content');
+      for (let tab of tabs) {
+        tab.classList.remove('active');
+      }
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    updateValue(0);
+    fillChart();
+  </script>
+
+</body>
+</html>
